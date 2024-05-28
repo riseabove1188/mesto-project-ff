@@ -3,17 +3,25 @@ import { initialCards } from "./cards.js";
 import { createCard, delCard } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
 
-export const cardTemplate = document.querySelector("#card-template").content;
 const cardContainer = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
+const bigImg = document.querySelector(".popup__image");
 
 const addCard = (card, delCard) => {
     const cardElement = createCard(card, delCard);
     cardContainer.prepend(cardElement);
+
+    const img = cardElement.querySelector(".card__image");
+
+    img.addEventListener("click", () => {
+        openModal(popupImg);
+        bigImg.setAttribute("src", img.src);
+        bigImg.setAttribute("alt", img.alt);
+    });
 };
 
-initialCards.forEach((cards) => {
-    addCard(cards, delCard);
+initialCards.forEach((card) => {
+    addCard(card, delCard);
 });
 
 //открытие редактирования профиля
@@ -109,7 +117,7 @@ newPlace.addEventListener("submit", (evt) => {
 });
 
 //открытие картинки
-export const popupImg = document.querySelector(".popup_type_image");
+const popupImg = document.querySelector(".popup_type_image");
 const closePopupImg = popupImg.querySelector(".popup__close");
 
 closePopupImg.addEventListener("click", () => {
