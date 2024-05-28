@@ -1,7 +1,7 @@
 import "./index.css";
 import { initialCards } from "./cards.js";
 import { createCard, delCard } from "./components/card.js";
-import { openModal, closeModal } from "./components/modal.js";
+import { openModal, closeModal, escClose } from "./components/modal.js";
 
 const cardContainer = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
