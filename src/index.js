@@ -1,22 +1,27 @@
 import "./index.css";
 import { initialCards } from "./cards.js";
-import { createCard, delCard } from "./components/card.js";
-import { openModal, closeModal, escClose } from "./components/modal.js";
+import { createCard, delCard, likeImg } from "./components/card.js";
+import { openModal, closeModal } from "./components/modal.js";
 
 const cardContainer = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
 const bigImg = document.querySelector(".popup__image");
 
+const openPopupImg = (el) => {
+    openModal(popupImg);
+    bigImg.setAttribute("src", el.src);
+    bigImg.setAttribute("alt", el.alt);
+    popupImg.querySelector(".popup__caption").textContent = el.alt;
+};
+
 const addCard = (card, delCard) => {
-    const cardElement = createCard(card, delCard);
+    const cardElement = createCard(card, delCard, likeImg, openPopupImg);
     cardContainer.prepend(cardElement);
 
     const img = cardElement.querySelector(".card__image");
 
     img.addEventListener("click", () => {
-        openModal(popupImg);
-        bigImg.setAttribute("src", img.src);
-        bigImg.setAttribute("alt", img.alt);
+        openPopupImg(img);
     });
 };
 
@@ -27,7 +32,7 @@ initialCards.forEach((card) => {
 //открытие редактирования профиля
 const profile = document.querySelector(".profile__edit-button");
 const editProfile = document.querySelector(".popup_type_edit");
-const closed = document.querySelector(".popup__close");
+const editProfileCloseButton = editProfile.querySelector(".popup__close");
 
 profile.addEventListener("click", () => {
     openModal(editProfile);
@@ -35,17 +40,11 @@ profile.addEventListener("click", () => {
     nameInput.value = title.textContent;
 });
 
-closed.addEventListener("click", () => {
+editProfileCloseButton.addEventListener("click", () => {
     closeModal(editProfile);
 });
 
-document.addEventListener("keydown", (evt) => {
-    if (evt.key === "Escape") {
-        closeModal(editProfile);
-    }
-});
-
-document.addEventListener("click", (evt) => {
+editProfile.addEventListener("click", (evt) => {
     if (
         editProfile.classList.contains("popup_is-opened") &&
         evt.target.classList.contains("popup_type_edit")
@@ -64,8 +63,6 @@ jobInput.setAttribute("value", "Исследователь океана");
 
 const title = document.querySelector(".profile__title");
 const description = document.querySelector(".profile__description");
-
-console.log(title.textContent, description.textContent);
 
 formProfile.addEventListener("submit", (evt) => {
     evt.preventDefault();
@@ -86,13 +83,7 @@ newCardCloseButton.addEventListener("click", () => {
     closeModal(newCard);
 });
 
-document.addEventListener("keydown", (evt) => {
-    if (evt.key === "Escape") {
-        closeModal(newCard);
-    }
-});
-
-document.addEventListener("click", (evt) => {
+newCard.addEventListener("click", (evt) => {
     if (
         newCard.classList.contains("popup_is-opened") &&
         evt.target.classList.contains("popup_type_new-card")
@@ -112,8 +103,7 @@ placeLink.setAttribute("value", "");
 newPlace.addEventListener("submit", (evt) => {
     evt.preventDefault();
     closeModal(newCard);
-    initialCards.unshift({ name: placeName.value, link: placeLink.value });
-    addCard(initialCards[0], delCard);
+    addCard({ name: placeName.value, link: placeLink.value }, delCard);
 });
 
 //открытие картинки
@@ -124,13 +114,7 @@ closePopupImg.addEventListener("click", () => {
     closeModal(popupImg);
 });
 
-document.addEventListener("keydown", (evt) => {
-    if (evt.key === "Escape") {
-        closeModal(popupImg);
-    }
-});
-
-document.addEventListener("click", (evt) => {
+popupImg.addEventListener("click", (evt) => {
     if (
         popupImg.classList.contains("popup_is-opened") &&
         evt.target.classList.contains("popup_type_image")
