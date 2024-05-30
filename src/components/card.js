@@ -1,11 +1,21 @@
 const cardTemplate = document.querySelector("#card-template").content;
+export const popupImg = document.querySelector(".popup_type_image");
+const bigImg = document.querySelector(".popup__image");
+const popupImgText = popupImg.querySelector(".popup__caption");
 
-export const createCard = (card, delCard, likeImg) => {
+export const createCard = (card, delCard, likeImg, openPopupImg) => {
     const cardElement = cardTemplate
         .querySelector(".places__item")
         .cloneNode(true);
 
     const img = cardElement.querySelector(".card__image");
+
+    img.addEventListener("click", () => {
+        openPopupImg(img);
+        bigImg.setAttribute("src", img.src);
+        bigImg.setAttribute("alt", img.alt);
+        popupImgText.textContent = img.alt;
+    });
 
     img.setAttribute("src", card.link);
     img.setAttribute("alt", card.name);
