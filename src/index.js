@@ -1,13 +1,19 @@
 import "./index.css";
 import { initialCards } from "./cards.js";
-import { createCard, delCard, likeImg, popupImg } from "./components/card.js";
+import { createCard, delCard, likeImg } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
 
 const cardContainer = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
+const popupImg = document.querySelector(".popup_type_image");
+const bigImg = document.querySelector(".popup__image");
+const popupImgText = popupImg.querySelector(".popup__caption");
 
-const openPopupImg = () => {
+const openPopupImg = (img) => {
     openModal(popupImg);
+    bigImg.setAttribute("src", img.src);
+    bigImg.setAttribute("alt", img.alt);
+    popupImgText.textContent = img.alt;
 };
 
 const addCard = (card, delCard) => {
