@@ -3,6 +3,12 @@ import { initialCards } from "./cards.js";
 import { createCard, delCard, likeImg } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
+import {
+    initData,
+    editProfileRequest,
+    newCardRequest,
+    currentUser
+} from "./components/api.js";
 
 const cardContainer = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
@@ -18,13 +24,9 @@ const openPopupImg = (img) => {
 };
 
 const addCard = (card, delCard) => {
-    const cardElement = createCard(card, delCard, likeImg, openPopupImg);
+    const cardElement = createCard(card, delCard, likeImg, openPopupImg, currentUser);
     cardContainer.prepend(cardElement);
 };
-
-initialCards.forEach((card) => {
-    addCard(card, delCard);
-});
 
 const profile = document.querySelector(".profile__edit-button");
 const editProfile = document.querySelector(".popup_type_edit");
@@ -32,6 +34,7 @@ const editProfileCloseButton = editProfile.querySelector(".popup__close");
 
 profile.addEventListener("click", () => {
     openModal(editProfile);
+    clearValidation(formProfile);
     jobInput.value = description.textContent;
     nameInput.value = title.textContent;
 });
@@ -53,9 +56,6 @@ const formProfile = document.forms["edit-profile"];
 const nameInput = formProfile.elements["name"];
 const jobInput = formProfile.elements["description"];
 
-nameInput.setAttribute("value", "Жак-Ив Кусто");
-jobInput.setAttribute("value", "Исследователь океана");
-
 const title = document.querySelector(".profile__title");
 const description = document.querySelector(".profile__description");
 
@@ -64,6 +64,7 @@ formProfile.addEventListener("submit", (evt) => {
     closeModal(editProfile);
     title.textContent = nameInput.value;
     description.textContent = jobInput.value;
+    editProfileRequest(nameInput.value, jobInput.value);
 });
 
 const newCard = document.querySelector(".popup_type_new-card");
@@ -71,6 +72,7 @@ const newCardCloseButton = newCard.querySelector(".popup__close");
 
 addButton.addEventListener("click", () => {
     openModal(newCard);
+    clearValidation(newPlace);
     placeName.value = "";
     placeLink.value = "";
 });
@@ -98,7 +100,9 @@ placeLink.setAttribute("value", "");
 newPlace.addEventListener("submit", (evt) => {
     evt.preventDefault();
     closeModal(newCard);
-    addCard({ name: placeName.value, link: placeLink.value }, delCard);
+    newCardRequest(placeName.value, placeLink.value).then((res) =>
+        addCard({ name: res.name, link: res.link }, delCard)
+    );
 });
 
 const closePopupImg = popupImg.querySelector(".popup__close");
@@ -117,3 +121,5 @@ popupImg.addEventListener("mousedown", (evt) => {
 });
 
 enableValidation();
+
+initData((card) => addCard(card, delCard));

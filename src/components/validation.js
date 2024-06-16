@@ -47,9 +47,10 @@ const toggleButtonState = (inputList, buttonElement) => {
 };
 
 export const clearValidation = (formElement) => {
-    console.log(formElement.reset)
-    formElement.reset();
-}
+    const inputList = Array.from(formElement.querySelectorAll(".popup__input"));
+
+    inputList.forEach(input => hideInputError(formElement, input))
+};
 
 const setEventListeners = (formElement) => {
     const inputList = Array.from(formElement.querySelectorAll(".popup__input"));
@@ -65,7 +66,6 @@ const setEventListeners = (formElement) => {
 };
 
 export const enableValidation = () => {
-    console.log('pwq');
     const formList = Array.from(document.querySelectorAll(".popup__form"));
 
     formList.forEach((formElement) => {
