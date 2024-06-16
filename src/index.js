@@ -2,7 +2,7 @@ import "./index.css";
 import { initialCards } from "./cards.js";
 import { createCard, delCard, likeImg } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
-import { enableValidation } from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
 
 const cardContainer = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
