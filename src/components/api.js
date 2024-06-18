@@ -1,3 +1,5 @@
+import { loading, formProfileButton, formProfileImgButton, newPlaceButton } from '../index.js';
+
 const userName = document.querySelector(".profile__title");
 const userAbout = document.querySelector(".profile__description");
 const userAvatar = document.querySelector(".profile__image");
@@ -59,7 +61,10 @@ export const editProfileRequest = (name, about) => {
             name,
             about,
         }),
-    });
+    })
+    .finally(() => {
+        loading(false, formProfileButton);
+      });
 };
 
 export const newCardRequest = (name, link) => {
@@ -77,7 +82,65 @@ export const newCardRequest = (name, link) => {
         .then((res) => res.json())
         .then((data) => {
             return data;
+        })
+        .finally(() => {
+            loading(false, newPlaceButton);
+          });
+};
+
+export const deleteCard = (id) => {
+    return fetch(`https://nomoreparties.co/v1/wff-cohort-16/cards/${id}`, {
+        method: "DELETE",
+        headers: {
+            authorization: "d8afb53e-cccd-48cb-86a5-80d2affde1d3",
+        },
+    }).then((res) => res.ok);
+};
+
+export const activeLike = (id) => {
+    return fetch(
+        `https://nomoreparties.co/v1/wff-cohort-16/cards/likes/${id}`,
+        {
+            method: "PUT",
+            headers: {
+                authorization: "d8afb53e-cccd-48cb-86a5-80d2affde1d3",
+            },
+        }
+    )
+        .then((res) => res.json())
+        .then((data) => {
+            return data;
         });
 };
 
+export const removeLike = (id) => {
+    return fetch(
+        `https://nomoreparties.co/v1/wff-cohort-16/cards/likes/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                authorization: "d8afb53e-cccd-48cb-86a5-80d2affde1d3",
+            },
+        }
+    )
+        .then((res) => res.json())
+        .then((data) => {
+            return data;
+        });
+};
 
+export const editProfileImgRequest = (avatar) => {
+    fetch("https://nomoreparties.co/v1/wff-cohort-16/users/me/avatar ", {
+        method: "PATCH",
+        headers: {
+            authorization: "d8afb53e-cccd-48cb-86a5-80d2affde1d3",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            avatar,
+        }),
+    })
+    .finally(() => {
+        loading(false, formProfileImgButton);
+      });
+};

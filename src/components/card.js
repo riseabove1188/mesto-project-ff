@@ -1,3 +1,5 @@
+import { deleteCard, activeLike, removeLike } from "./api.js";
+
 const cardTemplate = document.querySelector("#card-template").content;
 
 export const createCard = (
@@ -26,24 +28,46 @@ export const createCard = (
     const delButton = cardElement.querySelector(".card__delete-button");
 
     if (currentUser._id === card.owner._id) {
-        delButton.addEventListener("click", () => delCard(cardElement));
+        delButton.addEventListener("click", () => delCard(cardElement, card));
     } else {
-        delButton.classList.remove("card__delete-button");
+        delButton.style.display = "none";
     }
-
-    const likeButton = cardElement.querySelector(".card__like-button");
-    likeButton.addEventListener("click", () => likeImg(likeButton));
 
     const likesCounter = cardElement.querySelector(".counter");
     likesCounter.textContent = card.likes ? card.likes.length : 0;
 
+    const likeButton = cardElement.querySelector(".card__like-button");
+
+    const userLikeIds = card.likes.map((user) => user._id);
+
+    if (userLikeIds.includes(currentUser._id)) {
+        likeButton.classList.add("card__like-button_is-active");
+    }
+    likeButton.addEventListener("click", () =>
+        likeImg(likeButton, likesCounter, card)
+    );
+
     return cardElement;
 };
 
-export const delCard = (el) => {
-    el.remove();
+export const delCardHandler = (el, card) => {
+    deleteCard(card._id).then((res) => {
+        if (res) {
+            el.remove();
+        }
+    });
 };
 
-export const likeImg = (el) => {
-    el.classList.toggle("card__like-button_is-active");
+export const likeImgHandler = (el, counterEl, card) => {
+    if (el.classList.contains("card__like-button_is-active")) {
+        removeLike(card._id).then((res) => {
+            counterEl.textContent = res.likes.length;
+            el.classList.toggle("card__like-button_is-active");
+        });
+    } else {
+        activeLike(card._id).then((res) => {
+            counterEl.textContent = res.likes.length;
+            el.classList.toggle("card__like-button_is-active");
+        });
+    }
 };
