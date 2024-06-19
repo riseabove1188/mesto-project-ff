@@ -9,10 +9,23 @@
   margin: 0 29px 0 0;
   cursor: pointer;
   position: relative;
+  z-index: 2;
 }
 
 .profile__image:hover {
+  z-index: 0;
   opacity: 0.8;
+}
+
+.overley {
+  position: relative;
+}
+
+.pencil {
+  position: absolute;
+  top: 47px;
+  left: 47px;
+  z-index: 1;
 }
 
 @media screen and (max-width: 740px) {
