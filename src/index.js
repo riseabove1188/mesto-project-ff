@@ -1,5 +1,4 @@
 import "./index.css";
-import { initialCards } from "./cards.js";
 import {
     createCard,
     delCardHandler,
@@ -8,12 +7,21 @@ import {
 import { openModal, closeModal } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
 import {
-    initData,
+    getUserInfo,
+    startingCardsArray,
     editProfileRequest,
     newCardRequest,
-    currentUser,
-    editProfileImgRequest,
+    editProfileImgRequest
 } from "./components/api.js";
+
+const config = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'button_inactive',
+    inputErrorClass: 'form__input_type_error',
+    errorClass: 'form__input-error_active'
+};
 
 const cardContainer = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
@@ -45,7 +53,7 @@ const editProfileImgCloseButton = editProfileImg.querySelector(".popup__close");
 
 profileImg.addEventListener("click", () => {
     openModal(editProfileImg);
-    clearValidation(formProfileImg);
+    clearValidation(formProfileImg, config);
 });
 
 editProfileImgCloseButton.addEventListener("click", () => {
@@ -69,9 +77,12 @@ export const formProfileImgButton = formProfileImg.querySelector(".popup__button
 formProfileImg.addEventListener("submit", (evt) => {
     evt.preventDefault();
     closeModal(editProfileImg);
-    profileImg.src = newAvatarLink.value;
-    editProfileImgRequest(newAvatarLink.value);
     loading(true, formProfileImgButton);
+    editProfileImgRequest(newAvatarLink.value).then((res) => {
+        profileImg.src = res.avatar
+    })
+    .then((res) => loading(false, formProfileImgButton));;
+    
 });
 
 const profile = document.querySelector(".profile__edit-button");
@@ -80,7 +91,7 @@ const editProfileCloseButton = editProfile.querySelector(".popup__close");
 
 profile.addEventListener("click", () => {
     openModal(editProfile);
-    clearValidation(formProfile);
+    clearValidation(formProfile, config);
     jobInput.value = description.textContent;
     nameInput.value = title.textContent;
 });
@@ -109,10 +120,13 @@ export const formProfileButton = formProfile.querySelector(".popup__button");
 formProfile.addEventListener("submit", (evt) => {
     evt.preventDefault();
     closeModal(editProfile);
-    title.textContent = nameInput.value;
-    description.textContent = jobInput.value;
-    editProfileRequest(nameInput.value, jobInput.value);
-    loading(true, formProfileButton);
+    loading(true, formProfileButton); 
+    editProfileRequest(nameInput.value, jobInput.value)
+    .then((res) => {
+        title.textContent = res.name;
+        description.textContent = res.about;
+    })
+    .then((res) => loading(false, formProfileButton));
 });
 
 const newCard = document.querySelector(".popup_type_new-card");
@@ -120,7 +134,7 @@ const newCardCloseButton = newCard.querySelector(".popup__close");
 
 addButton.addEventListener("click", () => {
     openModal(newCard);
-    clearValidation(newPlace);
+    clearValidation(newPlace, config);
     placeName.value = "";
     placeLink.value = "";
 });
@@ -150,10 +164,11 @@ placeLink.setAttribute("value", "");
 newPlace.addEventListener("submit", (evt) => {
     evt.preventDefault();
     closeModal(newCard);
+    loading(true, newPlaceButton);
     newCardRequest(placeName.value, placeLink.value).then((res) =>
         addCard(res, delCardHandler)
-    );
-    loading(true, newPlaceButton);
+    )
+    .then(() => loading(false, newPlaceButton));
 });
 
 const closePopupImg = popupImg.querySelector(".popup__close");
@@ -171,7 +186,29 @@ popupImg.addEventListener("mousedown", (evt) => {
     }
 });
 
-enableValidation();
+enableValidation(config); 
+
+const userName = document.querySelector(".profile__title");
+const userAbout = document.querySelector(".profile__description");
+const userAvatar = document.querySelector(".profile__image");
+let currentUser;
+
+const initData = (fn) => {
+    Promise.all([getUserInfo(), startingCardsArray()]).then((res) => {
+        const user = res[0];
+        const cardsArray = res[1];
+
+        currentUser = user;
+
+        userName.textContent = user.name;
+        userAbout.textContent = user.about;
+        userAvatar.src = user.avatar;
+
+        cardsArray.forEach((card) => {
+            fn(card);
+        });
+    });
+};
 
 initData((card) => addCard(card, delCardHandler));
 

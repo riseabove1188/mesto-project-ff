@@ -55,19 +55,16 @@ export const delCardHandler = (el, card) => {
         if (res) {
             el.remove();
         }
-    });
+    })
+    .catch((err) => console.log(err));
 };
 
 export const likeImgHandler = (el, counterEl, card) => {
-    if (el.classList.contains("card__like-button_is-active")) {
-        removeLike(card._id).then((res) => {
-            counterEl.textContent = res.likes.length;
-            el.classList.toggle("card__like-button_is-active");
-        });
-    } else {
-        activeLike(card._id).then((res) => {
-            counterEl.textContent = res.likes.length;
-            el.classList.toggle("card__like-button_is-active");
-        });
-    }
+    const likeMethod = el.classList.contains("card__like-button_is-active") ? removeLike : activeLike;
+likeMethod(card._id) 
+        .then((res) => {
+           counterEl.textContent = res.likes.length; 
+           el.classList.toggle("card__like-button_is-active"); 
+        })
+.catch(err => console.log(err));
 };
