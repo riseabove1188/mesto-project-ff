@@ -1,5 +1,3 @@
-import { loading, formProfileButton, formProfileImgButton, newPlaceButton } from '../index.js';
-
 const config = {
     baseUrl: 'https://nomoreparties.co/v1/wff-cohort-16',
     headers: {
