@@ -8,18 +8,20 @@ const config = {
     }
   };
 
+  const handleResponse = res => {
+    if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+};
+
 export const getUserInfo = () => {
     return fetch(`${config.baseUrl}/users/me`, {
         headers: {
             authorization: config.headers.authorization,
         },
     })
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-              }
-        })
-        .catch((err) => console.log(err));
+    .then(handleResponse)
 };
 
 export const startingCardsArray = () => {
@@ -28,12 +30,7 @@ export const startingCardsArray = () => {
             authorization: config.headers.authorization,
         },
     })
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-              }
-        })
-        .catch((err) => console.log(err));
+    .then(handleResponse)
 };
 
 export const editProfileRequest = (name, about) => {
@@ -45,12 +42,7 @@ export const editProfileRequest = (name, about) => {
             about,
         }),
     })
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-          }
-    })
-    .catch((err) => console.log(err))
+    .then(handleResponse)
 };
 
 export const newCardRequest = (name, link) => {
@@ -62,12 +54,7 @@ export const newCardRequest = (name, link) => {
             link,
         }),
     })
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-              }
-        })
-        .catch((err) => console.log(err))        
+    .then(handleResponse)
 };
 
 export const deleteCard = (id) => {
@@ -76,8 +63,7 @@ export const deleteCard = (id) => {
         headers: {
             authorization: config.headers.authorization,
         },
-    }).then((res) => res.ok)
-    .catch((err) => console.log(err));
+    }).then(handleResponse)
 };
 
 export const activeLike = (id) => {
@@ -90,12 +76,7 @@ export const activeLike = (id) => {
             },
         }
     )
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-              }
-        })
-        .catch((err) => console.log(err));
+    .then(handleResponse)
 };
 
 export const removeLike = (id) => {
@@ -108,12 +89,7 @@ export const removeLike = (id) => {
             },
         }
     )
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-              }
-        })
-        .catch((err) => console.log(err));
+    .then(handleResponse)
 };
 
 export const editProfileImgRequest = (avatar) => {
@@ -124,13 +100,5 @@ export const editProfileImgRequest = (avatar) => {
             avatar,
         }),
     })
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-          }
-    })
-    .catch((err) => console.log(err))
-    .finally(() => {
-        loading(false, formProfileImgButton);
-      });
+    .then(handleResponse)
 };
